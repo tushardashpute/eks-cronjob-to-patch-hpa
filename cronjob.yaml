@@ -1,0 +1,18 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name:  nginx-deployment-scale-up
+spec:
+  schedule: 51 3 * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl:latest
+            command: ["/bin/sh","-c"]
+            args:
+            - kubectl patch hpa  nginx-deployment -p '{"spec":{"minReplicas":2 }}'
+          serviceAccountName: app-service-account
